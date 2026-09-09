@@ -16,6 +16,11 @@ function Pause-Demo {
   if ($Host.UI.RawUI) { Read-Host "`n  [Enter for at fortsaette]" | Out-Null }
 }
 
+# Start altid fra prod-tilstanden, også hvis en tidligere kørsel blev afbrudt
+# midt i demoen. Ellers fortæller trin 2 og 3 den forkerte historie.
+git checkout --quiet main
+git submodule update --init --recursive --quiet
+
 Overskrift "TRIN 1 - Git-strukturen"
 Write-Host "  Branch:            $(git branch --show-current)"
 Write-Host "  Submodule common:  $(git submodule status common)"

@@ -15,6 +15,11 @@ overskrift() {
 # Venter kun når nogen sidder og kigger — så scriptet også kan køre uovervåget.
 pause() { [ -t 0 ] && { printf "\n  [Enter for at fortsætte] "; read -r _; }; }
 
+# Start altid fra prod-tilstanden, også hvis en tidligere kørsel blev afbrudt
+# midt i demoen. Ellers fortæller trin 2 og 3 den forkerte historie.
+git checkout --quiet main
+git submodule update --init --recursive --quiet
+
 overskrift "TRIN 1 — Git-strukturen"
 echo "  Branch:            $(git branch --show-current)"
 echo "  Submodule common:  $(git submodule status common)"
