@@ -1,7 +1,0 @@
-node_modules/
-results/
-
-# Alt i secrets/ holdes ude — undtagen den tomme mappe og eksempelfilen.
-secrets/*
-!secrets/.gitkeep
-!secrets/example.env
