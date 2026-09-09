@@ -1,0 +1,11 @@
+# Eksempel på crontab hos kunden (crontab -e).
+#
+# Bemærk at der er ÉT checkout pr. miljø, i hver sin mappe. Et git-checkout kan
+# kun stå på én branch ad gangen, og det er branchen der bestemmer hvilken version
+# af de fælles tests miljøet kører. Se afsnittet om versionering i ../README.md.
+#
+#   /opt/pwc/kunde-a-sandbox   står på branch 'sandbox'  (common v1.1.0)
+#   /opt/pwc/kunde-a-prod      står på branch 'main'     (common v1.0.0)
+
+0 1 * * *  cd /opt/pwc/kunde-a-sandbox && ./wrapper.sh sandbox >> /var/log/pwc/kunde-a-sandbox.log 2>&1
+0 2 * * *  cd /opt/pwc/kunde-a-prod    && ./wrapper.sh prod    >> /var/log/pwc/kunde-a-prod.log    2>&1

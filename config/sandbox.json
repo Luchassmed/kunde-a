@@ -1,0 +1,15 @@
+{
+  "_kommentar": "Ingen credentials i denne fil. De ligger i filen som secrets_fil peger på, og den committes aldrig.",
+  "_kommentar_demo": "isc_release er sat til 2026.10: sandbox har fået den nye SailPoint-release som prod endnu ikke har.",
+
+  "kunde": "kunde-a",
+  "miljø": "sandbox",
+  "tenant_url": "https://kunde-a-sb.identitynow.com",
+  "isc_release": "2026.10",
+
+  "aktive_testcases": ["login", "access-request", "approval", "provisioning", "kunde-a-rolle"],
+
+  "taerskler_ms": { "warn": 3000, "fail": 8000 },
+  "schedule": "01:00",
+  "secrets_fil": "secrets/sandbox.env"
+}
