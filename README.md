@@ -2,6 +2,16 @@
 
 Kundens eget repo. Det er dette link kunden får — resten følger med automatisk.
 
+### for fredag mødet:
+`git submodule update --init --recursive`
+
+for at skifte branch pointer:
+```
+git submodule sync -- common
+git submodule update --init --remote common
+```
+
+## Struktur
 ```
 kunde-a/
   kunde-a.properties     Kundens egne værdier (tenant_url m.m.)
