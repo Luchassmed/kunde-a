@@ -1,25 +1,29 @@
 # kunde-a
 
-Kundens eget repo. Det er dette link kunden får — resten følger med automatisk.
+Kundens eget repo. Det fælles testframework ligger i `common/` som et git-submodule
+(repo: `isc-test-common`), mens dette repo kun har kundens miljø-konfiguration
+(`config/*.properties`) og evt. kundespecifikke tests (`tests/manifest.txt`).
 
-## Demo
+## Hvorfor branches, ikke tags
+
+Leverandøren ruller ændringer ud på sandbox nogle dage før pre-prod/prod, så koden i
+`common` skal kunne se forskelligt ud pr. miljø. Det styres via to branches i
+`isc-test-common`: `main` og `sandbox`. Kunderepoet peger på én af dem ad gangen via
+`branch = ...` i `.gitmodules`.
+
+## Skift miljø
+
 ```sh
 git clone --recurse-submodules https://github.com/Luchassmed/kunde-a.git
-git submodule status
-.\run.bat sandbox && .\run.bat prod
-git tag
 ```
 
-## Versionering
-
-`common/` er pinnet til én bestemt commit i `isc-test-common` — lige nu tag `v1.2.0`.
-En ændring i det fælles repo rammer altså ikke kunden automatisk; pinnen flyttes
-bevidst:
+For at skifte hvilken branch af `common` der bruges — ret `branch = main` til
+`branch = sandbox` (eller omvendt) i `.gitmodules`, og kør:
 
 ```sh
-git -C common fetch --tags
-git -C common checkout v1.2.0
-git add common && git commit -m "Flyt common til v1.2.0"
+git submodule sync -- common
+git submodule update --init --remote common
 ```
 
-Det er dét der gør at flere kunder kan køre hver sin version af den fælles kode.
+Kør derefter fx `.\run.bat sandbox` for at se, at både banner og testliste ændrer
+sig alt efter hvilken branch af `common` der er hentet.

@@ -1,3 +1,2 @@
-# Kun kundespecifikke tests
-test_kundea_custom_report|
-test_kundea_beta_integration|kundea_beta_integration
+# kundespecifikke tests
+test_kundea_custom_report
