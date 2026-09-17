@@ -18,4 +18,28 @@ jobs:
         run: docker build -f common/Dockerfile -t isc-test-runner .
 
       - name: Koer container (sandbox)
-        run: docker run --rm isc-test-runner sandbox
+        id: run_tests
+        continue-on-error: true
+        run: |
+          docker create --name test-run isc-test-runner sandbox
+          docker start -a test-run
+
+      - name: Hent Playwright-rapport ud af containeren
+        if: always()
+        run: docker cp test-run:/app/common/playwright-report ./playwright-report
+
+      - name: Ryd container op
+        if: always()
+        run: docker rm -f test-run
+
+      - name: Upload Playwright-rapport som artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Fejl jobbet hvis testene fejlede
+        if: steps.run_tests.outcome == 'failure'
+        run: exit 1
