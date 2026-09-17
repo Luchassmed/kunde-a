@@ -1,0 +1,21 @@
+name: Build and run test container
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (inkl. submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Byg image
+        run: docker build -f common/Dockerfile -t isc-test-runner .
+
+      - name: Koer container (sandbox)
+        run: docker run --rm isc-test-runner sandbox
