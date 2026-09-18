@@ -20,8 +20,13 @@ jobs:
       - name: Koer container (sandbox)
         id: run_tests
         continue-on-error: true
+        env:
+          ISC_USERNAME: ${{ secrets.ISC_USERNAME }}
+          ISC_PASSWORD: ${{ secrets.ISC_PASSWORD }}
         run: |
-          docker create --name test-run isc-test-runner sandbox
+          docker create --name test-run \
+            -e ISC_USERNAME -e ISC_PASSWORD \
+            isc-test-runner sandbox
           docker start -a test-run
 
       - name: Hent Playwright-rapport ud af containeren
