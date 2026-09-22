@@ -8,8 +8,7 @@ Kundens eget repo. Det fælles testframework ligger i `common/` som et git-submo
 
 Leverandøren ruller ændringer ud på sandbox nogle dage før pre-prod/prod, så koden i
 `common` skal kunne se forskelligt ud pr. miljø. Det styres via to branches i
-`isc-test-common`: `main` og `sandbox`. Kunderepoet peger på én af dem ad gangen via
-`branch = ...` i `.gitmodules`.
+`isc-test-common`: `main` og `sandbox`.
 
 ## Skift miljø
 
@@ -17,16 +16,26 @@ Leverandøren ruller ændringer ud på sandbox nogle dage før pre-prod/prod, s�
 git clone --recurse-submodules https://github.com/Luchassmed/kunde-a.git
 ```
 
-For at skifte hvilken branch af `common` der bruges — ret `branch = main` til
-`branch = sandbox` (eller omvendt) i `.gitmodules`, og kør:
+`run.bat`/`run.sh` i denne mappe (**ikke** dem inde i `common/`) styrer automatisk
+hvilken branch af `common` der bruges, ud fra miljø-argumentet:
 
-```sh
-git submodule sync -- common
-git submodule update --init --remote common
+```powershell
+.\run.bat sandbox    # checker sandbox-branchen af common ud, laeser config\sandbox.properties
+.\run.bat preprod    # checker main-branchen ud, laeser config\preprod.properties
+.\run.bat prod       # checker main-branchen ud, laeser config\prod.properties
 ```
 
-Kør derefter fx `.\run.bat sandbox` for at se, at både banner og testliste ændrer
-sig alt efter hvilken branch af `common` der er hentet.
+Kør uden argument, og den antager `sandbox`. Scriptet henter (`git fetch`) og skifter
+branch (`git checkout`) i `common/` hver gang, før testene startes — miljø og kode
+følges altså altid ad, uden et separat manuelt trin. Kør derfor altid **root-scriptet**
+(`.\run.bat`), ikke `common\run.bat` direkte — det sidste antager bare at `common/`
+allerede står på den rigtige branch og rører ikke ved den.
+
+Har `common/` lokale, ikke-committede ændringer, afbryder scriptet med en fejl i
+stedet for at overskrive dem — ryd op eller commit i `common/` selv for at fortsætte.
+
+Dette gælder kun den native/Windows Server-kørsel. Docker- og GitHub Actions-vejen
+bruger stadig `branch = ...` i `.gitmodules` (se `isc-test-common`s README) uændret.
 
 ## Opsætning uden Docker (Scenarie C: kunden kører selv)
 
@@ -47,11 +56,12 @@ common/setup.sh         # macOS / Linux
 den Docker-images allerede har indbygget, men skal her hentes eksplicit, da der ikke
 er noget forudbygget image at trække på.
 
-Kørsel (hver gang):
+Kørsel (hver gang) — brug root-scriptet, ikke `common\run.bat` direkte, så
+branch-skiftet beskrevet ovenfor sker automatisk:
 
 ```sh
-common\run.bat sandbox   # Windows
-common/run.sh sandbox    # macOS / Linux
+.\run.bat sandbox   # Windows
+./run.sh sandbox    # macOS / Linux
 ```
 
 Miljøets værdier (`tenant_url` m.fl.) hentes stadig fra `config/sandbox.properties` —
