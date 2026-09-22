@@ -10,7 +10,7 @@ COMMON_DIR="$ROOT/common"
 TARGET_BRANCH="main"
 [ "$ENVNAME" = "sandbox" ] && TARGET_BRANCH="sandbox"
 
-if [ -n "$(git -C "$COMMON_DIR" status --porcelain)" ]; then
+if [ -n "$(git -C "$COMMON_DIR" status --porcelain --untracked-files=no)" ]; then
   echo "[FEJL] common/ har lokale, ikke-committede aendringer - afbryder for ikke at miste dem."
   exit 1
 fi

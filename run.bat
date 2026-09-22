@@ -16,7 +16,7 @@ set "TARGET_BRANCH=main"
 if "%ENVNAME%"=="sandbox" set "TARGET_BRANCH=sandbox"
 
 set "DIRTY="
-for /f "delims=" %%S in ('git -C "%COMMON_DIR%" status --porcelain') do set "DIRTY=1"
+for /f "delims=" %%S in ('git -C "%COMMON_DIR%" status --porcelain --untracked-files=no') do set "DIRTY=1"
 if defined DIRTY (
   echo [FEJL] common\ har lokale, ikke-committede aendringer - afbryder for ikke at miste dem.
   exit /b 1
