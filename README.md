@@ -67,3 +67,34 @@ branch-skiftet beskrevet ovenfor sker automatisk:
 Miljøets værdier (`tenant_url` m.fl.) hentes stadig fra `config/sandbox.properties` —
 samme konfigurationsfil som Docker- og GitHub Actions-vejen bruger. Der er ingen
 forskel i *hvad* der testes, kun i *hvor* det kører.
+
+## Natlig kørsel uden GitHub Actions (Windows Task Scheduler)
+
+`run-nightly.ps1` kører alle tre miljøer efter tur, logger hvert til
+`logs\<tidsstempel>-<miljø>.log` (ikke committet, kun lokalt), og fejler aldrig
+hængende — Playwright's rapport er sat til aldrig at popper selv op
+(`open: 'never'`), netop fordi det ellers kan hænge for evigt ved en fejlet test
+uden nogen til at trykke Ctrl+C.
+
+Registrér som en planlagt opgave, der kører kl. 02:00 hver nat:
+
+```powershell
+schtasks /create /tn "ISC nattest - kunde-a" `
+  /tr "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"C:\sti\til\kunde-a\run-nightly.ps1`"" `
+  /sc daily /st 02:00 /ru SYSTEM
+```
+
+- Kør kommandoen fra en PowerShell med administratorrettigheder.
+- `/ru SYSTEM` kræver ingen adgangskode, men forudsætter at Node.js og Git er
+  installeret systemdækkende (ikke kun for din egen brugerprofil) — ellers finder
+  SYSTEM-kontoen dem ikke på PATH. Er det tilfældet, skift i stedet "run as"-konto
+  til en dedikeret servicebruger via Task Scheduler-GUI'en (Egenskaber → Generelt),
+  hvor adgangskoden indtastes i et maskeret felt i stedet for på kommandolinjen.
+- Test opgaven med det samme uden at vente til kl. 02:00:
+  `schtasks /run /tn "ISC nattest - kunde-a"`, og tjek bagefter `logs\`-mappen samt
+  Task Scheduler-historikken for opgaven.
+- Vil du kun teste ét miljø om natten i stedet for alle tre, tilføj
+  `-Environments sandbox` til `/tr`-argumentet.
+
+Alarmering/OTRS-integration ved fejl er ikke bygget endnu — lige nu er signalet at
+tjekke Task Schedulers "Last Run Result" for opgaven, eller læse log-filerne.
