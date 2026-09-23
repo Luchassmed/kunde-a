@@ -33,6 +33,10 @@ jobs:
         if: always()
         run: docker cp test-run:/app/common/playwright-report ./playwright-report
 
+      - name: Hent kundespecifik Playwright-rapport ud af containeren
+        if: always()
+        run: docker cp test-run:/app/common/customer-playwright-report ./customer-playwright-report || true
+
       - name: Ryd container op
         if: always()
         run: docker rm -f test-run
@@ -44,6 +48,15 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+      - name: Upload kundespecifik Playwright-rapport som artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: customer-playwright-report
+          path: customer-playwright-report/
+          retention-days: 14
+          if-no-files-found: ignore
 
       - name: Fejl jobbet hvis testene fejlede
         if: steps.run_tests.outcome == 'failure'

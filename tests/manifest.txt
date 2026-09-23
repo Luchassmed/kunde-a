@@ -1,2 +1,2 @@
-# kundespecifikke tests
-test_kundea_custom_report
+# kundespecifikke tests - filnavne relativt til tests/, koeres af common/run.sh|run.bat
+requestRole.spec.js
