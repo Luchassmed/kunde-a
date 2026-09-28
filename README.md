@@ -12,10 +12,6 @@ Leverandøren ruller ændringer ud på sandbox nogle dage før pre-prod/prod, s�
 
 ## Skift miljø
 
-```sh
-git clone --recurse-submodules https://github.com/Luchassmed/kunde-a.git
-```
-
 `run.bat`/`run.sh` i denne mappe (**ikke** dem inde i `common/`) styrer automatisk
 hvilken branch af `common` der bruges, ud fra miljø-argumentet:
 
@@ -27,8 +23,8 @@ hvilken branch af `common` der bruges, ud fra miljø-argumentet:
 
 Kør uden argument, og den antager `sandbox`. Scriptet henter (`git fetch`) og skifter
 branch (`git checkout`) i `common/` hver gang, før testene startes — miljø og kode
-følges altså altid ad, uden et separat manuelt trin. Kør derfor altid **root-scriptet**
-(`.\run.bat`), ikke `common\run.bat` direkte — det sidste antager bare at `common/`
+følges altså altid ad, uden et separat manuelt trin. Kør derfor altid **dette
+rod-script**, ikke `common\run.bat` direkte — det sidste antager bare at `common/`
 allerede står på den rigtige branch og rører ikke ved den.
 
 Har `common/` lokale, ikke-committede ændringer, afbryder scriptet med en fejl i
@@ -56,8 +52,7 @@ common/setup.sh         # macOS / Linux
 den Docker-images allerede har indbygget, men skal her hentes eksplicit, da der ikke
 er noget forudbygget image at trække på.
 
-Kørsel (hver gang) — brug root-scriptet, ikke `common\run.bat` direkte, så
-branch-skiftet beskrevet ovenfor sker automatisk:
+Kørsel (hver gang):
 
 ```sh
 .\run.bat sandbox   # Windows
@@ -70,11 +65,10 @@ forskel i *hvad* der testes, kun i *hvor* det kører.
 
 ## Natlig kørsel uden GitHub Actions (Windows Task Scheduler)
 
-`run-nightly.ps1` kører alle tre miljøer efter tur, logger hvert til
-`logs\<tidsstempel>-<miljø>.log` (ikke committet, kun lokalt), og fejler aldrig
-hængende — Playwright's rapport er sat til aldrig at popper selv op
-(`open: 'never'`), netop fordi det ellers kan hænge for evigt ved en fejlet test
-uden nogen til at trykke Ctrl+C.
+`run-nightly.ps1` kører alle tre miljøer efter tur og logger hvert til
+`logs\<tidsstempel>-<miljø>.log` (ikke committet, kun lokalt). Den hænger aldrig ved
+en fejlet test uden nogen til at trykke Ctrl+C, fordi Playwright's rapport er sat til
+aldrig at åbne selv (`open: 'never'`).
 
 Registrér som en planlagt opgave, der kører kl. 02:00 hver nat:
 
