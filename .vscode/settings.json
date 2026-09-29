@@ -1,0 +1,5 @@
+{
+  "playwright.env": {
+    "TENANT_URL": "https://partner14874.identitynow-demo.com/ui/d/mysailpoint"
+  }
+}
