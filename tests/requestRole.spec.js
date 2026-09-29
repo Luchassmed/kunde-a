@@ -16,16 +16,18 @@ test('anmod om adgang til en rolle via access request-kataloget', async ({ page 
   await page.click('button[type="submit"]');
   await expect(page.locator('#password')).toBeHidden({ timeout: 15000 });
 
+  // Nyt request-UI (ngar): /ui/d/request-center redirecter til .../ngar/request-access/for-self
   await page.goto('/ui/d/request-center');
-  await page.getByRole('button', { name: 'Request for Myself' }).click();
+  await page.getByTestId('ngar-search-input').fill(ROLE_NAME);
+  await page.getByTestId('ngar-search-input').press('Enter');
 
-  await page.getByTestId('search-bar-input').fill(ROLE_NAME);
-  await page.getByTestId('search-bar-input').press('Enter');
-  await expect(page.getByLabel(`Select ${ROLE_NAME} for request`)).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('button', { name: `View details for ${ROLE_NAME}` })).toBeVisible({ timeout: 10000 });
 
-  await page.getByLabel(`Select ${ROLE_NAME} for request`).click();
-  await page.getByLabel('Review and Submit 1 request').click();
-  await page.getByTestId('request-review-submit-request-button').click();
+  await page.getByRole('button', { name: 'Select', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue' }).click();
+  await expect(page).toHaveURL(/for-self\/cart/);
 
-  await expect(page.getByText('Your request was submitted.')).toBeVisible({ timeout: 30000 });
+  await page.getByRole('button', { name: 'Submit Request' }).click();
+  await expect(page).toHaveURL(/for-self\/success/, { timeout: 30000 });
+  await expect(page.getByText('Request Submitted')).toBeVisible();
 });
